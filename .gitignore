@@ -1,0 +1,15 @@
+# build output
+matrix_multiply
+matrix_multiply.exe
+*.o
+*.obj
+
+# generated benchmark / plot artifacts (recreate with `make benchmark` / `make plots`)
+results/*.csv
+plots/*.png
+
+# editor / OS cruft
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
