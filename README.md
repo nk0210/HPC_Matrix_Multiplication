@@ -18,7 +18,7 @@ the sequential one (element-wise, `epsilon = 1e-6`) and reports **speedup**
 ```
 parallel-matrix-multiply/
 ├── src/
-│   └── matrix_multiply_openmp.cpp   core program (interactive + --benchmark)
+│   └── matrix_multiply_openmp.cpp   core program (interactive / --sequential / --parallel / --benchmark)
 ├── scripts/
 │   ├── benchmark.sh                 sweep sizes x threads -> results/benchmark.csv
 │   └── plot_results.py              median of runs -> plots/*.png
@@ -31,6 +31,22 @@ parallel-matrix-multiply/
 └── README.md
 ```
 
+## Quick start
+
+```
+git clone https://github.com/nk0210/HPC_Matrix_Multiplication.git
+cd HPC_Matrix_Multiplication
+make            # or: mingw32-make        (build)
+./matrix_multiply                          # interactive: enter N, then T
+```
+
+Full report pipeline (needs Python + pandas + matplotlib):
+
+```
+make benchmark  # -> results/benchmark.csv   (a few minutes)
+make plots      # -> plots/*.png
+```
+
 ## Requirements
 
 | Tool | Notes |
@@ -40,7 +56,33 @@ parallel-matrix-multiply/
 | `bash` | for `scripts/benchmark.sh` (Git Bash / MSYS2 / WSL on Windows) |
 | Python 3 + `pandas` + `matplotlib` | for `scripts/plot_results.py` |
 
-Install the Python dependencies with:
+### Install the toolchain
+
+**Windows (MSYS2 / MinGW-w64)** – in an "MSYS2 UCRT64" shell:
+
+```
+pacman -S --needed mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-make python
+```
+
+Then use `mingw32-make` wherever this README says `make`, and run the shell
+scripts from the MSYS2 / Git Bash shell.
+
+**Ubuntu / Debian / WSL:**
+
+```
+sudo apt update && sudo apt install -y build-essential python3-pip
+```
+
+**macOS (Homebrew):**
+
+```
+brew install gcc make python
+```
+
+(Apple's `clang` has no OpenMP out of the box; use Homebrew `g++-14` or add
+`libomp`.)
+
+### Install the Python dependencies
 
 ```
 python -m pip install pandas matplotlib
@@ -160,8 +202,9 @@ or directly:
 bash scripts/benchmark.sh
 ```
 
-The full sweep does 60 sequential multiplications up to `2000 x 2000` and can
-take several minutes. For a quick end-to-end check you can shrink the grid
+The full sweep is 3 sizes x 4 thread counts x 3 runs = 36 rows, i.e. 36
+sequential plus 36 parallel multiplications up to `2000 x 2000`, and can take
+several minutes (about 8 minutes on a 24-thread machine). For a quick end-to-end check you can shrink the grid
 with environment variables (the CSV format is identical):
 
 ```
